@@ -22,10 +22,8 @@ class InputViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
         
-        // 背景をタップしたらdismissKeyboardメソッドを呼ぶように設定する
+        // 背景をタップしたらdismissKeyboardメソッドを呼ぶように設定
         let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
         
@@ -42,7 +40,6 @@ class InputViewController: UIViewController {
     }
     
 
-    
     func dismissKeyboard(){
         // キーボードを閉じる
         view.endEditing(true)
@@ -68,7 +65,7 @@ class InputViewController: UIViewController {
     func setNotification(task: Task) {
         let content = UNMutableNotificationContent()
         content.title = task.title
-        content.body  = task.contents       // bodyが空だと音しか出ない
+        content.body  = task.contents // body空→音しか出ない
         content.sound = UNNotificationSound.default()
         
         // ローカル通知が発動するtrigger（日付マッチ）を作成

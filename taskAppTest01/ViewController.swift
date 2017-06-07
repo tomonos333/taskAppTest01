@@ -10,28 +10,34 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,UISearchBarDelegate{
 
-    
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     
     //Realmインスタンスを取得する
     let realm = try! Realm()
     
-    // DB内のタスクが格納されるリスト。
+    // DB内のタスクが格納されるリスト
     // 日付近い順\順でソート：降順
     // 以降内容をアップデートするとリスト内は自動的に更新される。
     var taskArray = try! Realm().objects(Task.self).sorted(byKeyPath: "date", ascending: false)
     
-    
+    //Realmから、文字列で検索条件をでフィルタリングしたTaskオブジェクトを取得しtaskArrayに挿入・リスト(表示)を更新
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        taskArray = try! Realm().objects(Task.self).filter(String(format: "category CONTAINS '%@'", searchText)).sorted(byKeyPath: "date",ascending: false)
+        //taskArray = try! Realm().objects(Task.self).filter(String(format: "category = '%@'", searchText)).sorted(byKeyPath: "date", ascending: false)
+        tableView.reloadData()
+    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+ 
         tableView.delegate = self
         tableView.dataSource = self
+        searchBar.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -67,7 +73,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // MARK: UITableViewDelegateプロトコルのメソッド
     // 各セルを選択した時に実行されるメソッド
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "cellSegue",sender: nil) // ←追加する
+        //serchBarに入力されている文字列を初期化0604
+        
+        performSegue(withIdentifier: "cellSegue",sender: nil)
     }
     
     // セルが削除が可能なことを伝えるメソッド
@@ -103,8 +111,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }
     }
-    
-    
+
     
     // segue で画面遷移するに呼ばれる
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
@@ -131,6 +138,5 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-
 }
 
